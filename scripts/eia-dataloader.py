@@ -17,6 +17,19 @@ child_categories = requests.get(url=categories_url).json()["category"]["childcat
 sectors_categories_df = pd.DataFrame.from_dict(child_categories)
 sectors = sectors_categories_df[1:14]
 
+# helper function
+def calculate_carbon_footpring(row, is_col, is_ng, is_oil):
+    # only coal, natural gas and petrol contribute to carbon footprint
+    cf = 0
+    if is_col:
+        cf += row.COL * 2230
+    if is_ng:
+        cf += row.NG * 910
+    if is_oil:
+        cf += row.OIL * 2130
+    # converting mass: pounds -> kg
+    return cf / 2.205
+
 
 # Loading data
 
@@ -41,5 +54,16 @@ for i, (category_id, sector_name) in tqdm(sectors.iterrows(), desc="Loading data
     df = pd.concat(dfs, axis=1, join='inner')
     df.index = df.pop("date").iloc[:,0]
     df.sort_index(inplace=True)
+    
+    df["MWh"] = df.sum(axis=1)
+    
+    is_col = "COL" in df.columns
+    is_ng = "NG" in df.columns
+    is_oil = "OIL" in df.columns
+    
+    df = df.assign(
+        carbon_footprint = lambda r: calculate_carbon_footpring(r, is_col, is_ng, is_oil),
+        carbon_per_MWh = lambda r: r.carbon_footprint / r.MWh
+    )
     
     df.to_csv(DATA_DIR / f"{sector_name}.csv", index_label="datetime")
