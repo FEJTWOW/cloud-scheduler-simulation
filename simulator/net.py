@@ -38,3 +38,10 @@ class network:
         def predict(self):
             pass
             
+        def add_job(self,node_name,job):
+            if node_name in self.graph:
+                node = self.graph.nodes[node_name]
+                
+            else:
+                raise Exception(f"There is no {node_name} in graph")
+            
