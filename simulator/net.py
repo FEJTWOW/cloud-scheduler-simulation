@@ -15,6 +15,7 @@ class network:
         for i in os.listdir(data_path):
             name = i[:-4]
             data = pd.read_csv(data_path+'/'+i)
+            # znormalizować - przerobić datetime na utc
             data['datetime']=data.datetime.apply(
                 lambda x: datetime.strptime(x,"%Y-%m-%d %H:%M:%S%z")
             )
@@ -23,25 +24,27 @@ class network:
                 
             self.graph.add_node(name)
             self.graph.nodes[name]['data'] = data
+            self.graph.nodes[name]['current_emission'] = np.inf
             self.graph.nodes[name]['jobs'] = set()
             self.graph.nodes[name]['accumulated_co2'] = 0
-            self.self.graph.nodes[name]['resources'] = np.random.rand()*10
+            self.self.graph.nodes[name]['resources'] = 5#np.random.rand()*10
             self.graph.nodes[name]['cords'] = (np.random.randn(),np.random.randn())
         
         self.sim_end = self.sim_end + self.internal_time
             
-        def step(self):
-            while self.internal_time<self.sim_end:
-                
-                self.internal_time += self.interval
+    def step(self):
+        while self.internal_time<self.sim_end:
+            #w tej funkcji iterowć po dataframe'ach i ustawić current emission
             
-        def predict(self):
-            pass
+            self.internal_time += self.interval
+        
+    def predict(self):
+        pass
+        
+    def add_job(self,node_name,job):
+        if node_name in self.graph:
+            node = self.graph.nodes[node_name]
             
-        def add_job(self,node_name,job):
-            if node_name in self.graph:
-                node = self.graph.nodes[node_name]
-                
-            else:
-                raise Exception(f"There is no {node_name} in graph")
+        else:
+            raise Exception(f"There is no {node_name} in graph")
             
