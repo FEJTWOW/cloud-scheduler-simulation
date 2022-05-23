@@ -7,6 +7,10 @@ class job:
         self.resources = int(resuoruces)
         self.stress_lvl = 0
         
+    def is_running(self):
+        self.duration -= 1
+        return self.duration>0
+        
     @staticmethod
     def create_n_jobs(cls, n, lam_duration=8, lam_resources=1):
         params = [
@@ -15,7 +19,7 @@ class job:
         ]
         to_save = pd.DataFrame(params)
         to_save.columns = ['duration','resources']
-        to_save.to_csv()
+        to_save.to_csv('jobs.csv')
         return cls.create_jobs_from_params(params=params)
     
     @staticmethod
