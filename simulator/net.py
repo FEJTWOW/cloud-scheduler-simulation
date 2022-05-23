@@ -2,6 +2,7 @@ import os
 import networkx as nx
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 from datetime import datetime
 from datetime import timedelta
@@ -15,6 +16,7 @@ class network:
         for i in os.listdir(data_path):
             name = i[:-4]
             data = pd.read_csv(data_path+'/'+i)
+
             # znormalizować - przerobić datetime na utc
             data['datetime']=data.datetime.apply(
                 lambda x: datetime.strptime(x,"%Y-%m-%d %H:%M:%S%z")
@@ -35,14 +37,17 @@ class network:
         self.sim_end = self.sim_end + self.internal_time
             
     def step(self):
-        while self.internal_time<self.sim_end:
-            for i in self.graph.nodes():
-                self.set_emission(i)
-                self.acc_co2_compute(i)
-                self.filter_jobs(i)
-            #w tej funkcji iterowć po dataframe'ach i ustawić current emission
+        if self.internal_time>self.sim_end:
+            return False
             
-            self.internal_time += self.interval
+        for i in self.graph.nodes():
+            self.set_emission(i)
+            self.acc_co2_compute(i)
+            self.filter_jobs(i)
+        #w tej funkcji iterowć po dataframe'ach i ustawić current emission
+        
+        self.internal_time += self.interval
+        return True
         
     def predict(self):
         pass
@@ -55,7 +60,7 @@ class network:
         if node['current_emission']==np.inf or node['previous_emission']==np.inf:
             return
         for i in node['jobs']:
-            node['accumulated_co2'] += i.resources*(['current_emission'] + node['previous_emission'])/2
+            node['accumulated_co2'] += i.resources*(node['current_emission'] + node['previous_emission'])/2
             
     def filter_jobs(self,name):
         node = self.get_node(name)
@@ -67,6 +72,7 @@ class network:
         while node['data'].loc[node['index']].datetime < self.internal_time and node['index'] < node['data'].shape[0]:
             node['index'] += 1
         node['index'] -= 1 
+        node['index'] = np.maximum(node['index'],0)
         row = node['data'].loc[node['index']]
         node['current_emission'] = row.carbon_per_MWh
         
@@ -74,7 +80,7 @@ class network:
         nx.draw(
             self.graph,
             with_labels=True,
-            pos = dict([self.get_node(i)['cords'] for i in self.graph.nodes()]),
+            pos = dict([[i,self.get_node(i)['cords']] for i in self.graph.nodes()]),
             node_size = 800,
             node_color = [self.get_node(i)['accumulated_co2'] for i in self.graph.nodes()],
             cmap = 'cool',
@@ -86,7 +92,7 @@ class network:
         if node_name in self.graph:
             node = self.get_node(node_name)
             if np.sum([i.resources for i in node['jobs']]) + job.resources < node['resources']:
-                node['jobs'] |= job
+                node['jobs'] |= {job}
                 return True
             return False
             

@@ -4,7 +4,7 @@ from time import time
 class job:
     def __init__(self, duration, resources, constraints={}):
         self.duration = int(duration)
-        self.resources = int(resuoruces)
+        self.resources = int(resources)
         self.stress_lvl = 0
         
     def is_running(self):
@@ -20,13 +20,15 @@ class job:
         to_save = pd.DataFrame(params)
         to_save.columns = ['duration','resources']
         to_save.to_csv('jobs.csv')
-        return cls.create_jobs_from_params(params=params)
+        return cls.create_jobs_from_params(cls,params=params)
     
     @staticmethod
     def create_jobs_from_params(cls, **args):
         if 'path' in args:
-            params = pd.read_csv(path).values
-        elif "params" not in args:
+            params = pd.read_csv(args['path'],index_col=0).values
+        elif 'params' in args:
+            params = args['params']
+        else:
             raise Error("Method called without source of params")
         
         return [cls(i,j) for i,j in params]
