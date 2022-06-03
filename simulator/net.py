@@ -3,6 +3,8 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import geopandas as gpd
+
 
 from datetime import datetime
 from datetime import timedelta
@@ -31,10 +33,11 @@ class network:
             self.graph.nodes[name]['current_emission'] = np.inf
             self.graph.nodes[name]['jobs'] = set()
             self.graph.nodes[name]['accumulated_co2'] = 0
-            self.graph.nodes[name]['resources'] = 5#np.random.rand()*10
+            self.graph.nodes[name]['resources'] = 2#np.random.rand()*10
             self.graph.nodes[name]['cords'] = (np.random.randn(),np.random.randn())
         
         self.sim_end = self.sim_end + self.internal_time
+        self.countries = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
             
     def step(self):
         if self.internal_time>self.sim_end:
@@ -52,6 +55,12 @@ class network:
     def predict(self):
         pass
         
+    def get_acc_co2(self):
+        acc = []
+        for i in self.graph.nodes():
+            node = self.get_node(i)
+            acc.append(node['accumulated_co2'])
+        return acc
     def get_node(self,name):
         return self.graph.nodes[name]
         
@@ -77,15 +86,28 @@ class network:
         node['current_emission'] = row.carbon_per_MWh
         
     def vis(self):
-        nx.draw(
-            self.graph,
-            with_labels=True,
-            pos = dict([[i,self.get_node(i)['cords']] for i in self.graph.nodes()]),
-            node_size = 800,
-            node_color = [self.get_node(i)['accumulated_co2'] for i in self.graph.nodes()],
-            cmap = 'cool',
-        )
-        plt.show()
+        #try:
+        if hasattr(self,'put_fun'):
+            self.put_fun.__next__()
+        else:
+            self.countries.plot()
+            self.put_fun = self.put_graph_on_plot()
+
+        #except:
+        #    print('err')
+    def put_graph_on_plot(self):
+        while True:
+            nx.draw(
+                self.graph,
+                with_labels=True,
+                pos = dict([[i,self.get_node(i)['cords']] for i in self.graph.nodes()]),
+                node_size = 800,
+                node_color = [self.graph.nodes[i]['accumulated_co2'] for i in self.graph.nodes()],
+                cmap = 'cool',
+                #arrowsize = [self.g[i][j]['avg_traffic']*10+1 for i,j in self.g.edges()]
+            )
+            plt.pause(0.5) 
+            yield None
 
         
     def add_job(self,node_name,job):
