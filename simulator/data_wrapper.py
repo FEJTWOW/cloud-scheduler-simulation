@@ -25,7 +25,7 @@ class data_wrapper:
 
     def get_prediction_span(self, zone_name,datetime_start,datetime_end):
         timezone = pytz.timezone('UTC')
-        return self.data[zone_name].loc[(self.data[zone_name]['Date']>=timezone.localize(datetime_start)) & (self.data[zone_name]['Date']<=timezone.localize(datetime_end))]['carbon_per_MWh'].values
+        return self.data[zone_name].loc[(self.data[zone_name]['Date']>=datetime_start) & (self.data[zone_name]['Date']<=datetime_end)]['carbon_per_MWh'].values
     def get_prediction(self, zone_name,datetime):
         timezone = pytz.timezone('UTC')
         return self.data[zone_name].loc[self.data[zone_name]['Date']==timezone.localize(datetime)]['carbon_per_MWh'].values[0]
