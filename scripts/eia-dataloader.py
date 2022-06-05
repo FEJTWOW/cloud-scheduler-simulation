@@ -66,4 +66,6 @@ for i, (category_id, sector_name) in tqdm(sectors.iterrows(), desc="Loading data
         carbon_per_MWh = lambda r: r.carbon_footprint / r.MWh
     )
     
+    df = df.interpolate(method="linear")
+    
     df.to_csv(DATA_DIR / f"{sector_name}.csv", index_label="datetime")
