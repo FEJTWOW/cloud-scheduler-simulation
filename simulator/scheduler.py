@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from datetime import timezone
 from optimizer import optimizer
+from net import network
 
 class scheduler:
     def __init__(self, data_wrapper,net,start_datetime,scheduling_type="naive",naive_limit=5):
@@ -35,28 +36,38 @@ class scheduler:
 
     def schedule(self,jobs):
         if self.scheduling_type == "naive":
-            self.schedule_naive(jobs)
+            return self.schedule_naive(jobs)
         else:
-            self.schedule_optimized(jobs)
+            return self.schedule_optimized(jobs)
 
     def schedule_optimized(self,jobs):
         opt = optimizer(jobs,self.net.graph)
         result = opt.get_results()
+        to_return = set(range(0,len(jobs)))
         for key, value in result.items():
             for i in value:
-                self.net.add_job(key,jobs[i])
+                if self.net.add_job(key,jobs[i]):
+                    to_return -= set([i])
+
+        return [jobs[i] for i in to_return]
 
         
     def schedule_naive(self,jobs):
         result = {}
+        to_return = []
         for j in jobs:
             availabe_zones = []
             for key, value in self.zones_jobs.items():
-                if len(value) <self.naive_limit:
+                #if len(value) < self.naive_limit:
+                if self.net.get_available_resources(key)>j.resources:
                     availabe_zones.append(key)
+            if not availabe_zones:
+                to_return.append(j)
+                continue
             zone = self.get_job_zone(j,availabe_zones)
             self.zones_jobs[zone].append(j.duration)
             self.net.add_job(zone,j)
+        return to_return
 
     def step(self):
         self.datetime = self.datetime + timedelta(hours=1)

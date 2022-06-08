@@ -14,7 +14,7 @@ class job:
     @staticmethod
     def create_n_jobs(cls, n, lam_duration=8, lam_resources=1):
         params = [
-                    [np.random.poisson(lam_duration),np.random.poisson(lam_resources)%3]
+                    [np.random.poisson(lam_duration),np.random.poisson(lam_resources)+1]
                     for _ in range(n)
         ]
         to_save = pd.DataFrame(params)

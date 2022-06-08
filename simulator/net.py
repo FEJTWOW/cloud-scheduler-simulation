@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
 
-
 from datetime import datetime
 from datetime import timedelta
 
@@ -33,7 +32,7 @@ class network:
             self.graph.nodes[name]['current_emission'] = np.inf
             self.graph.nodes[name]['jobs'] = set()
             self.graph.nodes[name]['accumulated_co2'] = 0
-            self.graph.nodes[name]['resources'] = 2#np.random.rand()*10
+            self.graph.nodes[name]['resources'] = 16#np.random.rand()*10
             self.graph.nodes[name]['cords'] = (np.random.randn(),np.random.randn())
         
         self.sim_end = self.sim_end + self.internal_time
@@ -86,15 +85,12 @@ class network:
         node['current_emission'] = row.carbon_per_MWh
         
     def vis(self):
-        #try:
         if hasattr(self,'put_fun'):
             self.put_fun.__next__()
         else:
             self.countries.plot()
             self.put_fun = self.put_graph_on_plot()
 
-        #except:
-        #    print('err')
     def put_graph_on_plot(self):
         while True:
             nx.draw(
@@ -109,15 +105,24 @@ class network:
             plt.pause(0.5) 
             yield None
 
-        
+    def get_available_resources(self,node_name):
+        node = self.get_node(node_name)
+        return node['resources'] - np.sum([i.resources for i in node['jobs']])
+
     def add_job(self,node_name,job):
         if node_name in self.graph:
             node = self.get_node(node_name)
-            if np.sum([i.resources for i in node['jobs']]) + job.resources < node['resources']:
+            if self.get_available_resources(node_name)> job.resources:
                 node['jobs'] |= {job}
                 return True
             return False
             
         else:
             raise Exception(f"There is no {node_name} in graph")
-            
+
+    def get_all_available_resources(self):
+        acc = 0
+        for i in self.graph.nodes():
+            acc += self.get_available_resources(i)
+
+        return acc

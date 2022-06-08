@@ -32,10 +32,14 @@ class optimizer:
     def get_results(self):
         res = dict()
         #if self.status == cp_model.OPTIMAL or self.status == cp_model.FEASIBLE:
-        #    raise Warning("Not optimal")
+        #    Warning("Not optimal")
         for worker in range(self.num_workers):
             for task in range(self.num_tasks):
-                if self.solver.BooleanValue(self.x[worker, task]):
+                try:
+                    a = self.solver.BooleanValue(self.x[worker, task])
+                except:
+                    continue
+                if a:
                     worker_name = self.index_node_map[worker]
                     if  worker_name in res:
                         res[worker_name].append(task)

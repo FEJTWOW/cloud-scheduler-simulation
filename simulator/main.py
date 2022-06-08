@@ -7,24 +7,41 @@ from scheduler import scheduler
 import matplotlib.pyplot as plt
 import pytz
 
+def split_jobs(x,net):
+    jobs = []
+    to_add = []
+    acc = 0
+    for i in x:
+        if acc+i.resources<net.get_all_available_resources():
+            acc += i.resources
+            jobs.append(i)
+        else:
+            to_add.append(i)
+    return jobs, to_add
 net = network('../data/USA')
 wrapper = data_wrapper('../data/USA')
+#jobs = job.create_n_jobs(job,250)
 jobs = job.create_jobs_from_params(job,path='jobs.csv')
 b = datetime(2021, 11, 28, 22, 0, 0)
-c = datetime(2021, 11, 29, 22, 0, 0)
+c = datetime(2021, 12, 3, 22, 0, 0)
 timezone = pytz.timezone('UTC')
 
-scheduler = scheduler(wrapper,net,timezone.localize(b),"opt",5)
+jobs, to_add = split_jobs(jobs, net)
+scheduler = scheduler(wrapper,net,timezone.localize(b),"naive",5)
 scheduler.step()
 
-scheduler.schedule(jobs)
+jobs = scheduler.schedule(jobs)
 i = 0
 print('--------------------------------')
 cumulated = []
 while scheduler.step():
+    print(len(jobs))
     curr = net.get_acc_co2()
-    print(curr)
+    #print(curr)
     cumulated.append(sum(curr))
     #scheduler.vis()
+    if jobs or to_add:
+        jobs, to_add = split_jobs(jobs+to_add, net)
+        jobs = scheduler.schedule(jobs)
 plt.plot(cumulated)
 plt.show()
