@@ -6,7 +6,7 @@ from optimizer import optimizer
 from scheduler import scheduler
 import matplotlib.pyplot as plt
 import pytz
-
+import pandas as pd
 def split_jobs(x,net):
     jobs = []
     to_add = []
@@ -19,16 +19,16 @@ def split_jobs(x,net):
             to_add.append(i)
     return jobs, to_add
 
-net = network('../data/USA')
+net = network('../data/USA',sim_duration_days=1)
 wrapper = data_wrapper('../data/USA/predictions')
-#jobs = job.create_n_jobs(job,250)
+#jobs = job.create_n_jobs(job,35)
 jobs = job.create_jobs_from_params(job,path='jobs.csv')
 b = datetime(2022, 1, 1, 6, 0, 0)
 c = datetime(2021, 12, 3, 22, 0, 0)
 timezone = pytz.timezone('UTC')
 
 jobs, to_add = split_jobs(jobs, net)
-scheduler = scheduler(wrapper,net,timezone.localize(b),"naive",3)
+scheduler = scheduler(wrapper,net,timezone.localize(b),"opt",3)
 scheduler.step()
 
 jobs = scheduler.schedule(jobs)
@@ -46,3 +46,5 @@ while scheduler.step():
         jobs = scheduler.schedule(jobs)
 plt.plot(cumulated)
 plt.show()
+pd.DataFrame(cumulated).to_csv('output.csv')
+
