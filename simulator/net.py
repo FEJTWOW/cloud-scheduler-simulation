@@ -61,6 +61,7 @@ class network:
             acc.append(node['accumulated_co2'])
         return acc
     def get_node(self,name):
+        name = name.split('_')[0]
         return self.graph.nodes[name]
         
     def acc_co2_compute(self,name):
@@ -110,6 +111,7 @@ class network:
         return node['resources'] - np.sum([i.resources for i in node['jobs']])
 
     def add_job(self,node_name,job):
+        node_name = node_name.split('_')[0]
         if node_name in self.graph:
             node = self.get_node(node_name)
             if self.get_available_resources(node_name)> job.resources:
