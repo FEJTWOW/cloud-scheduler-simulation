@@ -14,7 +14,7 @@ class network:
         self.internal_time = None
         self.interval = timedelta(hours = interval_hours)
         self.sim_end = timedelta(days=sim_duration_days)
-        for i in os.listdir(data_path):
+        for i in [i for i in os.listdir(data_path) if '.csv'in i]:
             name = i[:-4]
             data = pd.read_csv(data_path+'/'+i)
 

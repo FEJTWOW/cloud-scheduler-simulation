@@ -18,6 +18,7 @@ def split_jobs(x,net):
         else:
             to_add.append(i)
     return jobs, to_add
+
 net = network('../data/USA')
 wrapper = data_wrapper('../data/USA/predictions')
 #jobs = job.create_n_jobs(job,250)
