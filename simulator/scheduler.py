@@ -3,6 +3,7 @@ from datetime import timezone
 from optimizer import optimizer
 from net import network
 
+
 class scheduler:
     def __init__(self, data_wrapper,net,start_datetime,scheduling_type="naive",naive_limit=5):
         self.data_wrapper = data_wrapper

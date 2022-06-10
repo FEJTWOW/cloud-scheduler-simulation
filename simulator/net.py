@@ -9,7 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 
 class network:
-    def __init__(self,data_path,interval_hours = 1, sim_duration_days=2):
+    def __init__(self,data_path,interval_hours = 1, sim_duration_days=3):
         self.graph = nx.Graph()
         self.internal_time = None
         self.interval = timedelta(hours = interval_hours)

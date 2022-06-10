@@ -28,7 +28,7 @@ c = datetime(2021, 12, 3, 22, 0, 0)
 timezone = pytz.timezone('UTC')
 
 jobs, to_add = split_jobs(jobs, net)
-scheduler = scheduler(wrapper,net,timezone.localize(b),"naive",5)
+scheduler = scheduler(wrapper,net,timezone.localize(b),"naive",3)
 scheduler.step()
 
 jobs = scheduler.schedule(jobs)
