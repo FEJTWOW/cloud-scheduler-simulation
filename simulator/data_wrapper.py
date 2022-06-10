@@ -8,7 +8,7 @@ import pytz
 
 class data_wrapper:
     def __init__(self, data_dir):
-        csv_files = glob.glob(data_dir + "/*.csv")
+        csv_files = glob.glob(data_dir + "/*dnn_pred.csv")
         df_list = [pd.read_csv(file) for file in csv_files]
         zone_list = [os.path.basename(i).split('.')[0] for i in csv_files]
         self.zones = zone_list

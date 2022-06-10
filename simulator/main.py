@@ -19,10 +19,10 @@ def split_jobs(x,net):
             to_add.append(i)
     return jobs, to_add
 net = network('../data/USA')
-wrapper = data_wrapper('../data/USA')
+wrapper = data_wrapper('../data/USA/predictions')
 #jobs = job.create_n_jobs(job,250)
 jobs = job.create_jobs_from_params(job,path='jobs.csv')
-b = datetime(2021, 11, 28, 22, 0, 0)
+b = datetime(2022, 1, 1, 6, 0, 0)
 c = datetime(2021, 12, 3, 22, 0, 0)
 timezone = pytz.timezone('UTC')
 
