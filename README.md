@@ -8,13 +8,13 @@ Project was created as part of the course carried out in AGH. It's a proof of co
 
 Herein you can see some basic visualizations of time series:
 
-<img src="data/USA/images/Texas.pdf" width="400">
-<img src="data/europe/images/IT.pdf" width="400">
+<img src="data/USA/images/Texas-1.png" width="400">
+<img src="data/europe/images/IT-1.png" width="400">
 
 We have also check trend and seasonality of data:
 
-<img src="data/USA/images/Texas_autocorr.pdf" width="400">
-<img src="data/europe/images/IT_autocorr.pdf" width="400">
+<img src="data/USA/images/Texas_autocorr-1.png" width="400">
+<img src="data/europe/images/IT_autocorr-1.png" width="400">
 
 
 ## ML models
@@ -23,8 +23,8 @@ We also create some ML models to predict carboon footrpint.
 
 Herein you can see results from our DNN:
 
-<img src="data/USA/images/Florida_dnn_preds.pdf" width="400">
-<img src="data/europe/images/CZ_dnn_preds.pdf" width="400">
+<img src="data/USA/images/Florida_dnn_preds-1.png" width="400">
+<img src="data/europe/images/CZ_dnn_preds-1.png" width="400">
 
 ## Job simulation
 
