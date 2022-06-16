@@ -1,4 +1,4 @@
-# Cloud Scheduler Simulation :boom: :boom: :star2:
+# Cloud Scheduler Simulation :star2:
 
 
 ## About project
