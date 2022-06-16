@@ -21,7 +21,7 @@ We have also check trend and seasonality of data:
 
 We also create some ML models to predict carboon footrpint.
 
-Herein you can see results from our DNN:
+Herein, you can see results from our DNN:
 
 <img src="data/USA/images/Florida_dnn_preds-1.png" width="600">
 <img src="data/europe/images/CZ_dnn_preds-1.png" width="600">
@@ -30,8 +30,10 @@ Herein you can see results from our DNN:
 
 We create simple job simulations and check how two types (naive and optmized) of jobs scheduling may contribute to CO2 emission.
 
-Thanks to [OR-tools](https://developers.google.com/optimization) we were able to optmize our job scheduling in optimized method.
+Thanks to [OR-tools](https://developers.google.com/optimization) we were able to optimize our job scheduling.
 
 ## Results
 
-As we expected, simulations with opmited method helps to reduce significant amount of CO2.
+As we expected, simulations with optimized methods helps to reduce significant amount of CO2.
+
+<img src="results/cumulated_dnn_usa-1.png" width="600">
